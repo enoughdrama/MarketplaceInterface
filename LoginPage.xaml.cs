@@ -1,15 +1,19 @@
 using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Data.Entity;
 
 namespace AppAuthorization
 {
-    public partial class LoginWindow : Window
+    public partial class LoginPage : Page
     {
-        public LoginWindow()
+        private MainWindow mainWindow;
+
+        public LoginPage()
         {
             InitializeComponent();
+            mainWindow = (MainWindow)Application.Current.MainWindow;
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -43,16 +47,19 @@ namespace AppAuthorization
 
                     MessageBox.Show("Вход выполнен успешно.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                     
-                    // Open HomePage and close login window
-                    HomePage homePage = new HomePage();
-                    homePage.Show();
-                    this.Close();
+                    // Navigate to HomePage
+                    mainWindow.NavigateToPage(new HomePage());
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при авторизации: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.NavigateToPage(new RegistrationPage());
         }
     }
 }
