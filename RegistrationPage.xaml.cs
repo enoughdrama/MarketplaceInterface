@@ -1,16 +1,20 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Data.Entity;
 using System.Text.RegularExpressions;
 
 namespace AppAuthorization
 {
-    public partial class RegistrationWindow : Window
+    public partial class RegistrationPage : Page
     {
-        public RegistrationWindow()
+        private MainWindow mainWindow;
+
+        public RegistrationPage()
         {
             InitializeComponent();
+            mainWindow = (MainWindow)Application.Current.MainWindow;
         }
 
         private bool IsValidPassword(string password, out string error)
@@ -93,12 +97,20 @@ namespace AppAuthorization
                     await context.SaveChangesAsync();
 
                     MessageBox.Show("Регистрация успешна.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+                    // Navigate to LoginPage
+                    mainWindow.NavigateToPage(new LoginPage());
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при регистрации: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            mainWindow.NavigateToPage(new LoginPage());
         }
     }
 }
