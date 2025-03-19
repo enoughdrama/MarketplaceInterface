@@ -1,0 +1,36 @@
+<Page x:Class="AppAuthorization.RegistrationPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:AppAuthorization"
+      mc:Ignorable="d" 
+      d:DesignHeight="400" d:DesignWidth="450"
+      Title="Регистрация">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Background="WhiteSmoke">
+        <Border CornerRadius="10" Background="White" Padding="20" 
+            HorizontalAlignment="Center" VerticalAlignment="Center" 
+            Effect="{StaticResource DropShadowEffect}" Width="388">
+            <StackPanel>
+                <TextBlock Text="Имя пользователя:"/>
+                <TextBox x:Name="UsernameTextBox"/>
+                <TextBlock Text="Пароль:"/>
+                <PasswordBox x:Name="PasswordBox"/>
+                <TextBlock Text="Подтвердите пароль:"/>
+                <PasswordBox x:Name="ConfirmPasswordBox"/>
+                <Button Content="Зарегистрироваться" Style="{StaticResource FormButtonStyle}" Click="RegisterButton_Click" HorizontalAlignment="Center" Width="200" Margin="0,10,0,0"/>
+                <TextBlock Text="Уже есть аккаунт?" HorizontalAlignment="Center" Margin="0,20,0,5"/>
+                <Button Content="Войти" Style="{StaticResource ActionButtonStyle}" Click="LoginButton_Click" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Page>
