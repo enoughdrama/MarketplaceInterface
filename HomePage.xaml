@@ -22,7 +22,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
         <Grid Grid.Row="0" Background="White">
             <Grid.Effect>
                 <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1" Color="Black"/>
@@ -33,16 +32,13 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Logo -->
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="20,0,0,0">
                 <TextBlock Text="Маркет" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" Foreground="#FF3B5998"/>
                 <TextBlock Text="Плейс" FontSize="22" FontWeight="Light" VerticalAlignment="Center" Foreground="#444444"/>
             </StackPanel>
 
-            <!-- Search Box -->
             <TextBox Grid.Column="1" Style="{StaticResource SearchBoxStyle}" Text="Поиск товаров..." Name="SearchBox" GotFocus="SearchBox_GotFocus" LostFocus="SearchBox_LostFocus"/>
 
-            <!-- Profile and Cart -->
             <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,20,0">
                 <Button Style="{StaticResource IconButtonStyle}" Name="NotificationsButton" Click="NotificationsButton_Click">
                     <Grid>
@@ -66,10 +62,8 @@
             </StackPanel>
         </Grid>
 
-        <!-- Main Content -->
         <ScrollViewer Grid.Row="1" Style="{StaticResource MainScrollViewerStyle}">
             <StackPanel>
-                <!-- Hero Banner with Animation -->
                 <Border Style="{StaticResource BannerStyle}">
                     <Border.RenderTransform>
                         <TranslateTransform Y="0"/>
@@ -92,7 +86,6 @@
                     </Grid>
                 </Border>
 
-                <!-- Categories Section -->
                 <TextBlock Text="Категории" Style="{StaticResource SectionTitleStyle}"/>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="5,0">
                     <StackPanel Orientation="Horizontal" Margin="10,0">
@@ -159,7 +152,6 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- Popular Products Section -->
                 <TextBlock Text="Популярные товары" Style="{StaticResource SectionTitleStyle}"/>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="5,0">
                     <StackPanel Orientation="Horizontal" Margin="10,0">
@@ -218,7 +210,6 @@
                     </StackPanel>
                 </ScrollViewer>
 
-                <!-- Special Offers Section -->
                 <TextBlock Text="Специальные предложения" Style="{StaticResource SectionTitleStyle}"/>
                 <Grid Margin="15,0,15,20">
                     <Grid.ColumnDefinitions>
