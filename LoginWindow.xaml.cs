@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Data.Entity;
@@ -42,6 +42,11 @@ namespace AppAuthorization
                     }
 
                     MessageBox.Show("Вход выполнен успешно.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    
+                    // Open HomePage and close login window
+                    HomePage homePage = new HomePage();
+                    homePage.Show();
+                    this.Close();
                 }
             }
             catch (Exception ex)
