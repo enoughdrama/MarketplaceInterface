@@ -1,0 +1,26 @@
+<Page x:Class="AppAuthorization.WelcomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:AppAuthorization"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="1000"
+      Title="Welcome">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="Добро пожаловать в Маркетплейс" FontSize="32" FontWeight="Bold" Foreground="#333333" HorizontalAlignment="Center" Margin="0,0,0,40"/>
+            <Button Content="Войти" Style="{StaticResource MainButtonStyle}" Click="LoginButton_Click"/>
+            <Button Content="Зарегистрироваться" Style="{StaticResource MainButtonStyle}" Click="RegisterButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Page>
