@@ -5,11 +5,14 @@ using System.Windows.Input;
 
 namespace AppAuthorization
 {
-    public partial class HomePage : Window
+    public partial class HomePage : Page
     {
+        private MainWindow mainWindow;
+
         public HomePage()
         {
             InitializeComponent();
+            mainWindow = (MainWindow)Application.Current.MainWindow;
         }
 
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
