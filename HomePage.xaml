@@ -70,7 +70,7 @@
         <ScrollViewer Grid.Row="1" Style="{StaticResource MainScrollViewerStyle}">
             <StackPanel>
                 <!-- Hero Banner with Animation -->
-                <Border Style="{StaticResource BannerStyle}" RenderTransformOrigin="0.5,0.5">
+                <Border Style="{StaticResource BannerStyle}">
                     <Border.RenderTransform>
                         <TranslateTransform Y="0"/>
                     </Border.RenderTransform>
@@ -96,9 +96,9 @@
                 <TextBlock Text="Категории" Style="{StaticResource SectionTitleStyle}"/>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="5,0">
                     <StackPanel Orientation="Horizontal" Margin="10,0">
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click" RenderTransformOrigin="0.5,0.5">
+                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
                             <Border.RenderTransform>
-                                <TranslateTransform/>
+                                <TranslateTransform Y="0"/>
                             </Border.RenderTransform>
                             <StackPanel VerticalAlignment="Center">
                                 <Ellipse Width="60" Height="60" Fill="#E3F2FD" Margin="0,0,0,10"/>
@@ -106,9 +106,9 @@
                                 <TextBlock Text="358 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click" RenderTransformOrigin="0.5,0.5">
+                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
                             <Border.RenderTransform>
-                                <TranslateTransform/>
+                                <TranslateTransform Y="0"/>
                             </Border.RenderTransform>
                             <StackPanel VerticalAlignment="Center">
                                 <Ellipse Width="60" Height="60" Fill="#FFF3E0" Margin="0,0,0,10"/>
@@ -116,9 +116,9 @@
                                 <TextBlock Text="1240 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click" RenderTransformOrigin="0.5,0.5">
+                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
                             <Border.RenderTransform>
-                                <TranslateTransform/>
+                                <TranslateTransform Y="0"/>
                             </Border.RenderTransform>
                             <StackPanel VerticalAlignment="Center">
                                 <Ellipse Width="60" Height="60" Fill="#E8F5E9" Margin="0,0,0,10"/>
@@ -126,9 +126,9 @@
                                 <TextBlock Text="743 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click" RenderTransformOrigin="0.5,0.5">
+                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
                             <Border.RenderTransform>
-                                <TranslateTransform/>
+                                <TranslateTransform Y="0"/>
                             </Border.RenderTransform>
                             <StackPanel VerticalAlignment="Center">
                                 <Ellipse Width="60" Height="60" Fill="#F3E5F5" Margin="0,0,0,10"/>
@@ -136,9 +136,9 @@
                                 <TextBlock Text="526 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click" RenderTransformOrigin="0.5,0.5">
+                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
                             <Border.RenderTransform>
-                                <TranslateTransform/>
+                                <TranslateTransform Y="0"/>
                             </Border.RenderTransform>
                             <StackPanel VerticalAlignment="Center">
                                 <Ellipse Width="60" Height="60" Fill="#FFEBEE" Margin="0,0,0,10"/>
@@ -146,9 +146,9 @@
                                 <TextBlock Text="295 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click" RenderTransformOrigin="0.5,0.5">
+                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
                             <Border.RenderTransform>
-                                <TranslateTransform/>
+                                <TranslateTransform Y="0"/>
                             </Border.RenderTransform>
                             <StackPanel VerticalAlignment="Center">
                                 <Ellipse Width="60" Height="60" Fill="#E0F7FA" Margin="0,0,0,10"/>
