@@ -1,4 +1,5 @@
-﻿using System.Windows;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace AppAuthorization
 {
@@ -7,18 +8,12 @@ namespace AppAuthorization
         public MainWindow()
         {
             InitializeComponent();
+            NavigateToPage(new WelcomePage());
         }
 
-        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        public void NavigateToPage(Page page)
         {
-            LoginWindow loginWindow = new LoginWindow();
-            loginWindow.ShowDialog();
-        }
-
-        private void RegisterButton_Click(object sender, RoutedEventArgs e)
-        {
-            RegistrationWindow registrationWindow = new RegistrationWindow();
-            registrationWindow.ShowDialog();
+            MainFrame.Navigate(page);
         }
     }
 }
