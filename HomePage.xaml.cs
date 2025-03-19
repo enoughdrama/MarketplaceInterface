@@ -2,7 +2,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media.Animation;
 
 namespace AppAuthorization
 {
@@ -11,27 +10,6 @@ namespace AppAuthorization
         public HomePage()
         {
             InitializeComponent();
-            AnimateElementsOnLoad();
-        }
-
-        private void AnimateElementsOnLoad()
-        {
-            var storyboard = new Storyboard();
-            
-            // Animate the search box
-            var searchBoxAnim = new DoubleAnimation
-            {
-                From = 0,
-                To = 1,
-                Duration = TimeSpan.FromMilliseconds(300),
-                BeginTime = TimeSpan.FromMilliseconds(100)
-            };
-            Storyboard.SetTarget(searchBoxAnim, SearchBox);
-            Storyboard.SetTargetProperty(searchBoxAnim, new PropertyPath("Opacity"));
-            storyboard.Children.Add(searchBoxAnim);
-            
-            // Start the animation
-            storyboard.Begin();
         }
 
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
@@ -129,43 +107,7 @@ namespace AppAuthorization
                         if (textBlock != null)
                         {
                             string productName = textBlock.Text;
-                            
-                            // Create and configure the animation
-                            ScaleTransform scaleTransform = new ScaleTransform(1, 1);
-                            button.RenderTransform = scaleTransform;
-                            
-                            DoubleAnimation animX = new DoubleAnimation
-                            {
-                                From = 1,
-                                To = 0.8,
-                                Duration = TimeSpan.FromMilliseconds(100),
-                                AutoReverse = true
-                            };
-                            
-                            DoubleAnimation animY = new DoubleAnimation
-                            {
-                                From = 1,
-                                To = 0.8,
-                                Duration = TimeSpan.FromMilliseconds(100),
-                                AutoReverse = true
-                            };
-                            
-                            Storyboard storyboard = new Storyboard();
-                            storyboard.Children.Add(animX);
-                            storyboard.Children.Add(animY);
-                            
-                            Storyboard.SetTarget(animX, button);
-                            Storyboard.SetTarget(animY, button);
-                            
-                            Storyboard.SetTargetProperty(animX, new PropertyPath("RenderTransform.ScaleX"));
-                            Storyboard.SetTargetProperty(animY, new PropertyPath("RenderTransform.ScaleY"));
-                            
-                            storyboard.Completed += (s, args) => 
-                            {
-                                MessageBox.Show($"Товар '{productName}' добавлен в корзину", "Корзина", MessageBoxButton.OK, MessageBoxImage.Information);
-                            };
-                            
-                            storyboard.Begin();
+                            MessageBox.Show($"Товар '{productName}' добавлен в корзину", "Корзина", MessageBoxButton.OK, MessageBoxImage.Information);
                         }
                     }
                 }
