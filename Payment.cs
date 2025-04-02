@@ -11,11 +11,11 @@ namespace AppAuthorization
         
         [ForeignKey("Order")]
         public int OrderId { get; set; }
-        public virtual Order Order { get; set; }
+        public virtual Order? Order { get; set; }
         
         [ForeignKey("PaymentMethod")]
         public int PaymentMethodId { get; set; }
-        public virtual PaymentMethod PaymentMethod { get; set; }
+        public virtual PaymentMethod? PaymentMethod { get; set; }
         
         [Required]
         public decimal Amount { get; set; }
@@ -23,8 +23,8 @@ namespace AppAuthorization
         [Required]
         public DateTime PaymentDate { get; set; } = DateTime.Now;
         
-        public string Status { get; set; }
+        public string Status { get; set; } = "Pending";
         
-        public string TransactionId { get; set; }
+        public string? TransactionId { get; set; }
     }
 }
