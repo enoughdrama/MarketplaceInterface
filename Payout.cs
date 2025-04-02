@@ -11,7 +11,7 @@ namespace AppAuthorization
         
         [ForeignKey("Seller")]
         public int SellerId { get; set; }
-        public virtual User Seller { get; set; }
+        public virtual User? Seller { get; set; }
         
         [Required]
         public decimal Amount { get; set; }
@@ -19,8 +19,8 @@ namespace AppAuthorization
         [Required]
         public DateTime PayoutDate { get; set; } = DateTime.Now;
         
-        public string Status { get; set; }
+        public string Status { get; set; } = "Pending";
         
-        public string TransactionId { get; set; }
+        public string? TransactionId { get; set; }
     }
 }
