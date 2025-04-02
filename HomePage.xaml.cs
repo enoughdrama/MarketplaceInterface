@@ -45,7 +45,41 @@ namespace AppAuthorization
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Функция профиля будет доступна в следующем обновлении", "Профиль", MessageBoxButton.OK, MessageBoxImage.Information);
+            var menuItems = new string[] { "Управление товарами", "Мои заказы", "Настройки", "Выход" };
+            var contextMenu = new ContextMenu();
+            
+            foreach (var item in menuItems)
+            {
+                var menuItem = new MenuItem { Header = item };
+                menuItem.Click += ProfileMenuItem_Click;
+                contextMenu.Items.Add(menuItem);
+            }
+            
+            contextMenu.IsOpen = true;
+        }
+        
+        private void ProfileMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var menuItem = sender as MenuItem;
+            
+            if (menuItem != null)
+            {
+                switch (menuItem.Header.ToString())
+                {
+                    case "Управление товарами":
+                        mainWindow.NavigateToPage(new ProductManagementPage());
+                        break;
+                    case "Мои заказы":
+                        MessageBox.Show("Функция просмотра заказов будет доступна в следующем обновлении", "Мои заказы", MessageBoxButton.OK, MessageBoxImage.Information);
+                        break;
+                    case "Настройки":
+                        MessageBox.Show("Функция настроек будет доступна в следующем обновлении", "Настройки", MessageBoxButton.OK, MessageBoxImage.Information);
+                        break;
+                    case "Выход":
+                        mainWindow.NavigateToPage(new LoginPage());
+                        break;
+                }
+            }
         }
 
         private void PromoBanner_Click(object sender, RoutedEventArgs e)
