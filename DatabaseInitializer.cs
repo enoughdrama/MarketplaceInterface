@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AppAuthorization
 {
-    public class DatabaseInitializer : CreateDatabaseIfNotExists<AppDbContext>
+    public class DatabaseInitializer : DropCreateDatabaseAlways<AppDbContext>
     {
         protected override void Seed(AppDbContext context)
         {
@@ -19,7 +19,7 @@ namespace AppAuthorization
                     new Role { RoleId = 3, RoleName = "Buyer", Description = "Can purchase products" }
                 };
                 
-                context.Roles.AddRange(roles);
+                roles.ForEach(r => context.Roles.Add(r));
                 context.SaveChanges();
                 
                 // Seed Admin User
@@ -42,6 +42,26 @@ namespace AppAuthorization
                 context.Users.Add(adminUser);
                 context.SaveChanges();
                 
+                // Create a sample seller
+                string sellerPassword = "Seller123!";
+                PasswordHelper.CreatePasswordHash(sellerPassword, out string sellerHash, out string sellerSalt);
+                
+                User sellerUser = new User
+                {
+                    Username = "seller",
+                    PasswordHash = sellerHash,
+                    Salt = sellerSalt,
+                    FirstName = "Test",
+                    LastName = "Seller",
+                    Email = "seller@marketplace.com",
+                    RoleId = 2, // Seller role
+                    RegistrationDate = DateTime.Now,
+                    IsActive = true
+                };
+                
+                context.Users.Add(sellerUser);
+                context.SaveChanges();
+                
                 // Seed Payment Methods
                 List<PaymentMethod> paymentMethods = new List<PaymentMethod>
                 {
@@ -51,7 +71,7 @@ namespace AppAuthorization
                     new PaymentMethod { Name = "Cash on Delivery", Description = "Pay when you receive your order" }
                 };
                 
-                context.PaymentMethods.AddRange(paymentMethods);
+                paymentMethods.ForEach(pm => context.PaymentMethods.Add(pm));
                 context.SaveChanges();
                 
                 // Seed Categories
@@ -65,7 +85,7 @@ namespace AppAuthorization
                     new Category { Name = "Books", Description = "Books and literature" }
                 };
                 
-                context.Categories.AddRange(categories);
+                categories.ForEach(c => context.Categories.Add(c));
                 context.SaveChanges();
                 
                 // Seed sample products
@@ -77,8 +97,8 @@ namespace AppAuthorization
                         Description = "Оперативная память: 8 ГБ, Память: 256 ГБ", 
                         Price = 69990M, 
                         Quantity = 100, 
-                        CategoryId = 1, // Electronics
-                        SellerId = 1  // Admin user (for demonstration)
+                        CategoryId = context.Categories.First(c => c.Name == "Electronics").CategoryId,
+                        SellerId = sellerUser.Id  // Use the seller we created
                     },
                     new Product 
                     { 
@@ -86,8 +106,8 @@ namespace AppAuthorization
                         Description = "Core i7, 16 ГБ RAM, 512 ГБ SSD, 14\" FHD IPS", 
                         Price = 89990M, 
                         Quantity = 50, 
-                        CategoryId = 1, // Electronics
-                        SellerId = 1  // Admin user
+                        CategoryId = context.Categories.First(c => c.Name == "Electronics").CategoryId, 
+                        SellerId = sellerUser.Id
                     },
                     new Product 
                     { 
@@ -95,12 +115,12 @@ namespace AppAuthorization
                         Description = "Активное шумоподавление, 24 часа работы", 
                         Price = 12490M, 
                         Quantity = 200, 
-                        CategoryId = 1, // Electronics
-                        SellerId = 1  // Admin user
+                        CategoryId = context.Categories.First(c => c.Name == "Electronics").CategoryId,
+                        SellerId = sellerUser.Id
                     }
                 };
                 
-                context.Products.AddRange(products);
+                products.ForEach(p => context.Products.Add(p));
                 context.SaveChanges();
                 
                 base.Seed(context);
