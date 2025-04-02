@@ -8,14 +8,20 @@ namespace AppAuthorization
 {
     public partial class LoginPage : Page
     {
-        private MainWindow mainWindow;
+        private MainWindow? mainWindow;
         private AppDbContext _context;
 
         public LoginPage()
         {
             InitializeComponent();
-            mainWindow = (MainWindow)Application.Current.MainWindow;
             _context = new AppDbContext();
+            
+            Loaded += LoginPage_Loaded;
+        }
+        
+        private void LoginPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            mainWindow = Window.GetWindow(this) as MainWindow;
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -56,7 +62,10 @@ namespace AppAuthorization
                 newMainWindow.Show();
                 
                 // Close the current MainWindow with login page
-                Window.GetWindow(this).Close();
+                if (Window.GetWindow(this) is Window currentWindow)
+                {
+                    currentWindow.Close();
+                }
             }
             catch (Exception ex)
             {
@@ -67,7 +76,10 @@ namespace AppAuthorization
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.NavigateToPage(new RegistrationPage());
+            if (mainWindow != null)
+            {
+                mainWindow.NavigateToPage(new RegistrationPage());
+            }
         }
     }
 }
