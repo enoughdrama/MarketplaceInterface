@@ -1,18 +1,189 @@
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace AppAuthorization
 {
     public partial class HomePage : Page
     {
         private MainWindow mainWindow;
+        private readonly AppDbContext _context;
+        private User _currentUser;
 
         public HomePage()
         {
             InitializeComponent();
             mainWindow = (MainWindow)Application.Current.MainWindow;
+            _context = new AppDbContext();
+            
+            if (mainWindow is MainWindow window && window._currentUser != null)
+            {
+                _currentUser = window._currentUser;
+            }
+            
+            Loaded += HomePage_Loaded;
+        }
+
+        private void HomePage_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadCategories();
+            LoadProducts();
+        }
+
+        private void LoadCategories()
+        {
+            try
+            {
+                CategoriesPanel.Children.Clear();
+                
+                var categories = _context.Categories.ToList();
+                foreach (var category in categories)
+                {
+                    var productCount = _context.Products.Count(p => p.CategoryId == category.CategoryId);
+                    
+                    Border categoryCard = new Border
+                    {
+                        Style = this.FindResource("CategoryCardStyle") as Style,
+                        Cursor = Cursors.Hand
+                    };
+                    
+                    categoryCard.MouseDown += Category_Click;
+                    categoryCard.Tag = category;
+                    
+                    StackPanel panel = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
+                    
+                    Ellipse icon = new Ellipse
+                    {
+                        Width = 60,
+                        Height = 60,
+                        Margin = new Thickness(0, 0, 0, 10)
+                    };
+                    
+                    // Generate random pastel color
+                    Random random = new Random(category.CategoryId);
+                    byte r = (byte)(155 + random.Next(100));
+                    byte g = (byte)(155 + random.Next(100));
+                    byte b = (byte)(155 + random.Next(100));
+                    icon.Fill = new SolidColorBrush(Color.FromRgb(r, g, b));
+                    
+                    TextBlock nameText = new TextBlock
+                    {
+                        Text = category.Name,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        FontWeight = FontWeights.SemiBold
+                    };
+                    
+                    TextBlock countText = new TextBlock
+                    {
+                        Text = $"{productCount} товаров",
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        FontSize = 12,
+                        Foreground = new SolidColorBrush(Color.FromRgb(119, 119, 119))
+                    };
+                    
+                    panel.Children.Add(icon);
+                    panel.Children.Add(nameText);
+                    panel.Children.Add(countText);
+                    
+                    categoryCard.Child = panel;
+                    CategoriesPanel.Children.Add(categoryCard);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error instead of showing a MessageBox
+                Console.WriteLine($"Error loading categories: {ex.Message}");
+            }
+        }
+
+        private void LoadProducts()
+        {
+            try
+            {
+                ProductsPanel.Children.Clear();
+                
+                var products = _context.Products
+                    .OrderBy(p => Guid.NewGuid()) // Random order for "Popular" section
+                    .Take(10)
+                    .ToList();
+                
+                foreach (var product in products)
+                {
+                    Border productCard = new Border
+                    {
+                        Style = this.FindResource("ProductCardStyle") as Style,
+                        Cursor = Cursors.Hand
+                    };
+                    
+                    productCard.MouseDown += Product_Click;
+                    productCard.Tag = product;
+                    
+                    StackPanel panel = new StackPanel { Margin = new Thickness(12) };
+                    
+                    Grid imageContainer = new Grid { Height = 180 };
+                    Rectangle imagePlaceholder = new Rectangle
+                    {
+                        Fill = new SolidColorBrush(Color.FromRgb(245, 245, 245)),
+                        RadiusX = 8,
+                        RadiusY = 8
+                    };
+                    imageContainer.Children.Add(imagePlaceholder);
+                    
+                    TextBlock nameText = new TextBlock
+                    {
+                        Text = product.Name,
+                        FontWeight = FontWeights.SemiBold,
+                        Margin = new Thickness(0, 10, 0, 5)
+                    };
+                    
+                    TextBlock descText = new TextBlock
+                    {
+                        Text = product.Description ?? "Нет описания",
+                        FontSize = 12,
+                        TextWrapping = TextWrapping.Wrap,
+                        Foreground = new SolidColorBrush(Color.FromRgb(119, 119, 119))
+                    };
+                    
+                    Grid priceContainer = new Grid { Margin = new Thickness(0, 15, 0, 0) };
+                    
+                    TextBlock priceText = new TextBlock
+                    {
+                        Text = $"{product.Price:N0} ₽",
+                        FontWeight = FontWeights.Bold,
+                        FontSize = 18,
+                        HorizontalAlignment = HorizontalAlignment.Left
+                    };
+                    
+                    Button addToCartButton = new Button
+                    {
+                        Content = "В корзину",
+                        Style = this.FindResource("ActionButtonStyle") as Style,
+                        HorizontalAlignment = HorizontalAlignment.Right
+                    };
+                    
+                    addToCartButton.Click += AddToCart_Click;
+                    addToCartButton.Tag = product;
+                    
+                    priceContainer.Children.Add(priceText);
+                    priceContainer.Children.Add(addToCartButton);
+                    
+                    panel.Children.Add(imageContainer);
+                    panel.Children.Add(nameText);
+                    panel.Children.Add(descText);
+                    panel.Children.Add(priceContainer);
+                    
+                    productCard.Child = panel;
+                    ProductsPanel.Children.Add(productCard);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error instead of showing a MessageBox
+                Console.WriteLine($"Error loading products: {ex.Message}");
+            }
         }
 
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
@@ -35,12 +206,12 @@ namespace AppAuthorization
 
         private void NotificationsButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("У вас нет новых уведомлений", "Уведомления", MessageBoxButton.OK, MessageBoxImage.Information);
+            // No messages for now
         }
 
         private void CartButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Корзина пуста", "Корзина", MessageBoxButton.OK, MessageBoxImage.Information);
+            // Cart is empty for now
         }
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
@@ -70,12 +241,13 @@ namespace AppAuthorization
                         mainWindow.NavigateToPage(new ProductManagementPage());
                         break;
                     case "Мои заказы":
-                        MessageBox.Show("Функция просмотра заказов будет доступна в следующем обновлении", "Мои заказы", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Not implemented yet
                         break;
                     case "Настройки":
-                        MessageBox.Show("Функция настроек будет доступна в следующем обновлении", "Настройки", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Not implemented yet
                         break;
                     case "Выход":
+                        // Go back to login
                         mainWindow.NavigateToPage(new LoginPage());
                         break;
                 }
@@ -84,125 +256,41 @@ namespace AppAuthorization
 
         private void PromoBanner_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Летняя распродажа: скидки до 50% на товары для отдыха и спорта!\nСрок акции ограничен.", "Акция", MessageBoxButton.OK, MessageBoxImage.Information);
+            // Promo details would go here
         }
 
         private void Category_Click(object sender, MouseButtonEventArgs e)
         {
-            var border = sender as Border;
-            if (border != null)
+            if (sender is Border border && border.Tag is Category category)
             {
-                var stackPanel = border.Child as StackPanel;
-                if (stackPanel != null)
-                {
-                    var textBlock = stackPanel.Children[1] as TextBlock;
-                    if (textBlock != null)
-                    {
-                        string categoryName = textBlock.Text;
-                        MessageBox.Show($"Выбрана категория: {categoryName}", "Категория", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
+                // Load category products
             }
         }
 
         private void Product_Click(object sender, MouseButtonEventArgs e)
         {
-            var border = sender as Border;
-            if (border != null)
+            if (sender is Border border && border.Tag is Product product)
             {
-                var stackPanel = border.Child as StackPanel;
-                if (stackPanel != null)
-                {
-                    var textBlock = stackPanel.Children[1] as TextBlock;
-                    if (textBlock != null)
-                    {
-                        string productName = textBlock.Text;
-                        MessageBox.Show($"Выбран товар: {productName}", "Товар", MessageBoxButton.OK, MessageBoxImage.Information);
-                    }
-                }
+                // Show product details
             }
         }
 
         private void AddToCart_Click(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
-            if (button != null)
+            if (sender is Button button && button.Tag is Product product)
             {
-                FrameworkElement parent = button.Parent as FrameworkElement;
-                while (parent != null && !(parent is Border))
-                {
-                    parent = parent.Parent as FrameworkElement;
-                }
-
-                if (parent != null && parent is Border)
-                {
-                    Border border = parent as Border;
-                    var stackPanel = border.Child as StackPanel;
-                    if (stackPanel != null)
-                    {
-                        var textBlock = stackPanel.Children[1] as TextBlock;
-                        if (textBlock != null)
-                        {
-                            string productName = textBlock.Text;
-                            MessageBox.Show($"Товар '{productName}' добавлен в корзину", "Корзина", MessageBoxButton.OK, MessageBoxImage.Information);
-                        }
-                    }
-                }
+                // Add to cart functionality
             }
         }
 
         private void Offer_Click(object sender, MouseButtonEventArgs e)
         {
-            var border = sender as Border;
-            if (border != null)
-            {
-                Grid grid = border.Child as Grid;
-                if (grid != null)
-                {
-                    StackPanel stackPanel = grid.Children[0] as StackPanel;
-                    if (stackPanel != null)
-                    {
-                        TextBlock textBlock = stackPanel.Children[0] as TextBlock;
-                        if (textBlock != null)
-                        {
-                            string offerName = textBlock.Text;
-                            MessageBox.Show($"Выбрано предложение: {offerName}", "Специальное предложение", MessageBoxButton.OK, MessageBoxImage.Information);
-                        }
-                    }
-                }
-            }
+            // Offer details would go here
         }
 
         private void ViewOffer_Click(object sender, RoutedEventArgs e)
         {
-            Button button = sender as Button;
-            if (button != null)
-            {
-                FrameworkElement parent = button.Parent as FrameworkElement;
-                while (parent != null && !(parent is Border))
-                {
-                    parent = parent.Parent as FrameworkElement;
-                }
-
-                if (parent != null && parent is Border)
-                {
-                    Border border = parent as Border;
-                    Grid grid = border.Child as Grid;
-                    if (grid != null)
-                    {
-                        StackPanel stackPanel = grid.Children[0] as StackPanel;
-                        if (stackPanel != null)
-                        {
-                            TextBlock textBlock = stackPanel.Children[0] as TextBlock;
-                            if (textBlock != null)
-                            {
-                                string offerName = textBlock.Text;
-                                MessageBox.Show($"Просмотр предложения: {offerName}", "Специальное предложение", MessageBoxButton.OK, MessageBoxImage.Information);
-                            }
-                        }
-                    }
-                }
-            }
+            // Show offer details
         }
     }
 }
