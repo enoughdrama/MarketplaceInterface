@@ -8,71 +8,40 @@
       d:DesignHeight="700" d:DesignWidth="1100"
       Title="Управление товарами">
 
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
-
-    <Grid>
+    <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="60"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Grid Grid.Row="0" Background="White">
-            <Grid.Effect>
-                <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.1" Color="Black"/>
-            </Grid.Effect>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
-
-            <!-- Title -->
-            <TextBlock Text="Управление товарами" FontSize="22" FontWeight="Bold" VerticalAlignment="Center" Margin="20,0,0,0" Foreground="#FF3B5998"/>
-
-            <!-- Back button -->
-            <Button Grid.Column="2" Content="Назад" Style="{StaticResource ActionButtonStyle}" Margin="0,0,20,0" Click="BackButton_Click"/>
-        </Grid>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <Button Content="Назад" Width="100" Height="30" Click="BackButton_Click"/>
+            <TextBlock Text="Управление товарами" FontSize="24" FontWeight="Bold" Margin="20,0,0,0" VerticalAlignment="Center"/>
+        </StackPanel>
 
         <!-- Main Content -->
-        <Grid Grid.Row="1" Margin="20">
+        <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Products List -->
-            <Border BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="5" Padding="10" Background="White">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
+            <!-- Product List -->
+            <DataGrid Grid.Column="0" x:Name="ProductsGrid" Margin="0,0,10,0" AutoGenerateColumns="False" 
+                      SelectionMode="Single" SelectionChanged="ProductsGrid_SelectionChanged">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding ProductId}" Width="50"/>
+                    <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
+                    <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:N2} ₽}" Width="100"/>
+                    <DataGridTextColumn Header="Количество" Binding="{Binding Quantity}" Width="100"/>
+                    <DataGridTextColumn Header="Категория" Binding="{Binding Category.Name}" Width="150"/>
+                </DataGrid.Columns>
+            </DataGrid>
 
-                    <TextBlock Text="Список товаров" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
-
-                    <DataGrid Grid.Row="1" x:Name="ProductsDataGrid" AutoGenerateColumns="False" 
-                              IsReadOnly="True" SelectionMode="Single" SelectionChanged="ProductsDataGrid_SelectionChanged">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding ProductId}" Width="50"/>
-                            <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="*"/>
-                            <DataGridTextColumn Header="Категория" Binding="{Binding Category.Name}" Width="120"/>
-                            <DataGridTextColumn Header="Цена" Binding="{Binding Price, StringFormat={}{0:N2} ₽}" Width="100"/>
-                            <DataGridTextColumn Header="Количество" Binding="{Binding Quantity}" Width="100"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
-                </Grid>
-            </Border>
-
-            <!-- Product Details -->
-            <Border Grid.Column="1" BorderBrush="#DDDDDD" BorderThickness="1" CornerRadius="5" Padding="10" Margin="10,0,0,0" Background="White">
+            <!-- Product Details Form -->
+            <Border Grid.Column="1" BorderBrush="#DDDDDD" BorderThickness="1" Padding="10">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -80,7 +49,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <TextBlock Text="Информация о товаре" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                    <TextBlock Grid.Row="0" Text="Информация о товаре" FontSize="18" FontWeight="SemiBold" Margin="0,0,0,10"/>
 
                     <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
                         <StackPanel>
@@ -88,7 +57,7 @@
                             <TextBox x:Name="NameTextBox" Margin="0,0,0,10"/>
 
                             <TextBlock Text="Описание:"/>
-                            <TextBox x:Name="DescriptionTextBox" TextWrapping="Wrap" AcceptsReturn="True" Height="60" Margin="0,0,0,10"/>
+                            <TextBox x:Name="DescriptionTextBox" TextWrapping="Wrap" AcceptsReturn="True" Height="100" Margin="0,0,0,10"/>
 
                             <TextBlock Text="Цена:"/>
                             <TextBox x:Name="PriceTextBox" Margin="0,0,0,10"/>
@@ -97,24 +66,20 @@
                             <TextBox x:Name="QuantityTextBox" Margin="0,0,0,10"/>
 
                             <TextBlock Text="Категория:"/>
-                            <ComboBox x:Name="CategoryComboBox" DisplayMemberPath="Name" Margin="0,0,0,10"/>
+                            <ComboBox x:Name="CategoryComboBox" DisplayMemberPath="Name" SelectedValuePath="CategoryId" Margin="0,0,0,10"/>
                         </StackPanel>
                     </ScrollViewer>
 
                     <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
-                        <Button Content="Новый" Style="{StaticResource FormButtonStyle}" Width="80" Margin="0,0,5,0" Click="NewButton_Click"/>
-                        <Button Content="Сохранить" Style="{StaticResource FormButtonStyle}" Width="80" Margin="5,0" Click="SaveButton_Click"/>
-                        <Button Content="Удалить" Style="{StaticResource FormButtonStyle}" Width="80" Margin="5,0,0,0" Click="DeleteButton_Click"/>
+                        <Button Content="Новый" Width="90" Margin="0,0,5,0" Click="NewButton_Click"/>
+                        <Button Content="Сохранить" Width="90" Margin="5,0" Click="SaveButton_Click"/>
+                        <Button Content="Удалить" Width="90" Margin="5,0,0,0" Click="DeleteButton_Click"/>
                     </StackPanel>
                 </Grid>
             </Border>
         </Grid>
 
         <!-- Status Bar -->
-        <StatusBar Grid.Row="2" Height="25">
-            <StatusBarItem>
-                <TextBlock x:Name="StatusTextBlock" Text="Готово"/>
-            </StatusBarItem>
-        </StatusBar>
+        <TextBlock Grid.Row="2" x:Name="StatusText" Margin="0,10,0,0"/>
     </Grid>
 </Page>
