@@ -21,5 +21,8 @@ namespace AppAuthorization
         
         [Required]
         public decimal Price { get; set; }
+        
+        [NotMapped]
+        public decimal Subtotal => Quantity * Price;
     }
 }
