@@ -27,16 +27,22 @@ namespace AppAuthorization
                 return false;
             }
 
-            string allowedPattern = @"^[A-Za-z!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]+$";
+            string allowedPattern = @"^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]+$";
             if (!Regex.IsMatch(password, allowedPattern))
             {
-                error = "Пароль может содержать только английские буквы и спецсимволы.";
+                error = "Пароль может содержать только английские буквы, цифры и спецсимволы.";
                 return false;
             }
 
             if (!Regex.IsMatch(password, @"[A-Za-z]"))
             {
                 error = "Пароль должен содержать хотя бы одну английскую букву.";
+                return false;
+            }
+            
+            if (!Regex.IsMatch(password, @"[0-9]"))
+            {
+                error = "Пароль должен содержать хотя бы одну цифру.";
                 return false;
             }
 
@@ -90,7 +96,8 @@ namespace AppAuthorization
                     {
                         Username = username,
                         PasswordHash = passwordHash,
-                        Salt = salt
+                        Salt = salt,
+                        RoleId = 3 // Default to Buyer role (assuming 3 is the Buyer role ID)
                     };
 
                     context.Users.Add(newUser);
