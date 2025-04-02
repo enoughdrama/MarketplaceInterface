@@ -25,7 +25,7 @@
                         <TextBlock x:Name="MinLengthTextBlock" Text="• Минимум 8 символов" FontSize="12" Foreground="#555555"/>
                         <TextBlock x:Name="HasLetterTextBlock" Text="• Минимум 1 английская буква" FontSize="12" Foreground="#555555"/>
                         <TextBlock x:Name="HasDigitTextBlock" Text="• Минимум 1 цифра" FontSize="12" Foreground="#555555"/>
-                        <TextBlock x:Name="HasSpecialTextBlock" Text="• Минимум 1 спецсимвол" FontSize="12" Foreground="#555555"/>
+                        <TextBlock x:Name="HasSpecialTextBlock" Text="• Минимум 1 спецсимвол (！@#$%^&amp;*)" FontSize="12" Foreground="#555555"/>
                     </StackPanel>
                 </Border>
                 
