@@ -9,7 +9,7 @@ namespace AppAuthorization
 {
     public partial class RegistrationPage : Page
     {
-        private MainWindow mainWindow;
+        private MainWindow? mainWindow;
         private AppDbContext _context;
         private SolidColorBrush _validBrush = new SolidColorBrush(Colors.Green);
         private SolidColorBrush _invalidBrush = new SolidColorBrush(Color.FromRgb(85, 85, 85));
@@ -17,13 +17,22 @@ namespace AppAuthorization
         public RegistrationPage()
         {
             InitializeComponent();
-            mainWindow = (MainWindow)Application.Current.MainWindow;
             _context = new AppDbContext();
+            
+            Loaded += RegistrationPage_Loaded;
+        }
+        
+        private void RegistrationPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            mainWindow = Window.GetWindow(this) as MainWindow;
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.NavigateToPage(new LoginPage());
+            if (mainWindow != null)
+            {
+                mainWindow.NavigateToPage(new LoginPage());
+            }
         }
 
         private void RegisterButton_Click(object sender, RoutedEventArgs e)
@@ -81,7 +90,10 @@ namespace AppAuthorization
                 _context.SaveChanges();
 
                 // Successful registration - navigate to login page
-                mainWindow.NavigateToPage(new LoginPage());
+                if (mainWindow != null)
+                {
+                    mainWindow.NavigateToPage(new LoginPage());
+                }
             }
             catch (Exception ex)
             {
