@@ -8,8 +8,8 @@ namespace AppAuthorization
         public int RoleId { get; set; }
         
         [Required]
-        public string RoleName { get; set; }
+        public string RoleName { get; set; } = string.Empty;
         
-        public string Description { get; set; }
+        public string? Description { get; set; }
     }
 }
