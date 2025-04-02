@@ -8,19 +8,11 @@
       d:DesignHeight="600" d:DesignWidth="1000"
       Title="Welcome">
 
-    <Page.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Page.Resources>
-
     <Grid>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock Text="Добро пожаловать в Маркетплейс" FontSize="32" FontWeight="Bold" Foreground="#333333" HorizontalAlignment="Center" Margin="0,0,0,40"/>
-            <Button Content="Войти" Style="{StaticResource MainButtonStyle}" Click="LoginButton_Click"/>
-            <Button Content="Зарегистрироваться" Style="{StaticResource MainButtonStyle}" Click="RegisterButton_Click"/>
+            <Button Content="Войти" Width="220" Height="40" Margin="10" FontSize="16" Click="LoginButton_Click"/>
+            <Button Content="Зарегистрироваться" Width="220" Height="40" Margin="10" FontSize="16" Click="RegisterButton_Click"/>
         </StackPanel>
     </Grid>
 </Page>
