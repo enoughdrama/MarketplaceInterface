@@ -1,39 +1,48 @@
-﻿using System;
-using System.Reflection.Metadata;
-using System.Security.Claims;
+using System;
 using System.Security.Cryptography;
-using static System.Net.Mime.MediaTypeNames;
-using System.Windows.Controls;
-using System.Windows.Media.Media3D;
-using System.Windows;
-using System.Xml.Linq;
+using System.Text;
 
-public static class PasswordHelper
+namespace AppAuthorization
 {
-    public static void CreatePasswordHash(string password, out string passwordHash, out string salt)
+    public static class PasswordHelper
     {
-        byte[] saltBytes = new byte[16];
-        using (var rng = new RNGCryptoServiceProvider())
+        public static void CreatePasswordHash(string password, out string passwordHash, out string salt)
         {
-            rng.GetBytes(saltBytes);
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Password cannot be empty", nameof(password));
+            
+            using (var hmac = new HMACSHA512())
+            {
+                salt = Convert.ToBase64String(hmac.Key);
+                passwordHash = Convert.ToBase64String(
+                    hmac.ComputeHash(Encoding.UTF8.GetBytes(password)));
+            }
         }
-        salt = Convert.ToBase64String(saltBytes);
 
-        using (var deriveBytes = new Rfc2898DeriveBytes(password, saltBytes, 10000))
+        public static bool VerifyPassword(string password, string storedHash, string storedSalt)
         {
-            byte[] hashBytes = deriveBytes.GetBytes(20);
-            passwordHash = Convert.ToBase64String(hashBytes);
-        }
-    }
+            if (string.IsNullOrWhiteSpace(password))
+                throw new ArgumentException("Password cannot be empty", nameof(password));
+            if (string.IsNullOrWhiteSpace(storedHash))
+                throw new ArgumentException("Stored hash cannot be empty", nameof(storedHash));
+            if (string.IsNullOrWhiteSpace(storedSalt))
+                throw new ArgumentException("Stored salt cannot be empty", nameof(storedSalt));
 
-    public static bool VerifyPassword(string enteredPassword, string storedHash, string storedSalt)
-    {
-        byte[] saltBytes = Convert.FromBase64String(storedSalt);
-        using (var deriveBytes = new Rfc2898DeriveBytes(enteredPassword, saltBytes, 10000))
-        {
-            byte[] enteredHashBytes = deriveBytes.GetBytes(20);
-            string enteredHash = Convert.ToBase64String(enteredHashBytes);
-            return enteredHash == storedHash;
+            byte[] saltBytes = Convert.FromBase64String(storedSalt);
+            byte[] hashBytes = Convert.FromBase64String(storedHash);
+            
+            using (var hmac = new HMACSHA512(saltBytes))
+            {
+                byte[] computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != hashBytes[i])
+                        return false;
+                }
+            }
+            
+            return true;
         }
     }
 }
