@@ -4,31 +4,33 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace AppAuthorization
 {
     public partial class HomePage : Page
     {
-        private MainWindow mainWindow;
+        private MainWindow? mainWindow;
         private readonly AppDbContext _context;
-        private User _currentUser;
+        private User? _currentUser;
 
         public HomePage()
         {
             InitializeComponent();
-            mainWindow = (MainWindow)Application.Current.MainWindow;
             _context = new AppDbContext();
-            
-            if (mainWindow is MainWindow window && window._currentUser != null)
-            {
-                _currentUser = window._currentUser;
-            }
             
             Loaded += HomePage_Loaded;
         }
 
         private void HomePage_Loaded(object sender, RoutedEventArgs e)
         {
+            mainWindow = Window.GetWindow(this) as MainWindow;
+            
+            if (mainWindow != null && mainWindow.CurrentUser != null)
+            {
+                _currentUser = mainWindow.CurrentUser;
+            }
+            
             LoadCategories();
             LoadProducts();
         }
@@ -134,7 +136,7 @@ namespace AppAuthorization
                     
                     TextBlock nameText = new TextBlock
                     {
-                        Text = product.Name,
+                        Text = product.Name ?? string.Empty,
                         FontWeight = FontWeights.SemiBold,
                         Margin = new Thickness(0, 10, 0, 5)
                     };
@@ -231,9 +233,7 @@ namespace AppAuthorization
         
         private void ProfileMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            var menuItem = sender as MenuItem;
-            
-            if (menuItem != null)
+            if (sender is MenuItem menuItem && mainWindow != null)
             {
                 switch (menuItem.Header.ToString())
                 {
