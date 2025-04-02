@@ -92,108 +92,16 @@
                 <!-- Categories Section -->
                 <TextBlock Text="Категории" Style="{StaticResource SectionTitleStyle}"/>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="5,0">
-                    <StackPanel Orientation="Horizontal" Margin="10,0">
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
-                            <StackPanel VerticalAlignment="Center">
-                                <Ellipse Width="60" Height="60" Fill="#E3F2FD" Margin="0,0,0,10"/>
-                                <TextBlock Text="Электроника" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                                <TextBlock Text="358 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
-                            <StackPanel VerticalAlignment="Center">
-                                <Ellipse Width="60" Height="60" Fill="#FFF3E0" Margin="0,0,0,10"/>
-                                <TextBlock Text="Одежда" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                                <TextBlock Text="1240 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
-                            <StackPanel VerticalAlignment="Center">
-                                <Ellipse Width="60" Height="60" Fill="#E8F5E9" Margin="0,0,0,10"/>
-                                <TextBlock Text="Дом и сад" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                                <TextBlock Text="743 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
-                            <StackPanel VerticalAlignment="Center">
-                                <Ellipse Width="60" Height="60" Fill="#F3E5F5" Margin="0,0,0,10"/>
-                                <TextBlock Text="Красота" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                                <TextBlock Text="526 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
-                            <StackPanel VerticalAlignment="Center">
-                                <Ellipse Width="60" Height="60" Fill="#FFEBEE" Margin="0,0,0,10"/>
-                                <TextBlock Text="Спорт" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                                <TextBlock Text="295 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource CategoryCardStyle}" Cursor="Hand" MouseDown="Category_Click">
-                            <StackPanel VerticalAlignment="Center">
-                                <Ellipse Width="60" Height="60" Fill="#E0F7FA" Margin="0,0,0,10"/>
-                                <TextBlock Text="Книги" HorizontalAlignment="Center" FontWeight="SemiBold"/>
-                                <TextBlock Text="1872 товаров" HorizontalAlignment="Center" FontSize="12" Foreground="#777777"/>
-                            </StackPanel>
-                        </Border>
+                    <StackPanel x:Name="CategoriesPanel" Orientation="Horizontal" Margin="10,0">
+                        <!-- Categories will be loaded here from DB -->
                     </StackPanel>
                 </ScrollViewer>
 
                 <!-- Popular Products Section -->
                 <TextBlock Text="Популярные товары" Style="{StaticResource SectionTitleStyle}"/>
                 <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" Margin="5,0">
-                    <StackPanel Orientation="Horizontal" Margin="10,0">
-                        <Border Style="{StaticResource ProductCardStyle}" Cursor="Hand" MouseDown="Product_Click">
-                            <StackPanel Margin="12">
-                                <Grid Height="180">
-                                    <Rectangle Fill="#F5F5F5" RadiusX="8" RadiusY="8"/>
-                                </Grid>
-                                <TextBlock Text="Смартфон Galaxy S23" FontWeight="SemiBold" Margin="0,10,0,5"/>
-                                <TextBlock Text="Оперативная память: 8 ГБ, Память: 256 ГБ" FontSize="12" TextWrapping="Wrap" Foreground="#777777"/>
-                                <Grid Margin="0,15,0,0">
-                                    <TextBlock Text="69 990 ₽" FontWeight="Bold" FontSize="18" HorizontalAlignment="Left"/>
-                                    <Button Content="В корзину" Style="{StaticResource ActionButtonStyle}" HorizontalAlignment="Right" Click="AddToCart_Click"/>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource ProductCardStyle}" Cursor="Hand" MouseDown="Product_Click">
-                            <StackPanel Margin="12">
-                                <Grid Height="180">
-                                    <Rectangle Fill="#F5F5F5" RadiusX="8" RadiusY="8"/>
-                                </Grid>
-                                <TextBlock Text="Ноутбук ProBook X360" FontWeight="SemiBold" Margin="0,10,0,5"/>
-                                <TextBlock Text="Core i7, 16 ГБ RAM, 512 ГБ SSD, 14&quot; FHD IPS" FontSize="12" TextWrapping="Wrap" Foreground="#777777"/>
-                                <Grid Margin="0,15,0,0">
-                                    <TextBlock Text="89 990 ₽" FontWeight="Bold" FontSize="18" HorizontalAlignment="Left"/>
-                                    <Button Content="В корзину" Style="{StaticResource ActionButtonStyle}" HorizontalAlignment="Right" Click="AddToCart_Click"/>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource ProductCardStyle}" Cursor="Hand" MouseDown="Product_Click">
-                            <StackPanel Margin="12">
-                                <Grid Height="180">
-                                    <Rectangle Fill="#F5F5F5" RadiusX="8" RadiusY="8"/>
-                                </Grid>
-                                <TextBlock Text="Наушники AirSound Pro" FontWeight="SemiBold" Margin="0,10,0,5"/>
-                                <TextBlock Text="Активное шумоподавление, 24 часа работы" FontSize="12" TextWrapping="Wrap" Foreground="#777777"/>
-                                <Grid Margin="0,15,0,0">
-                                    <TextBlock Text="12 490 ₽" FontWeight="Bold" FontSize="18" HorizontalAlignment="Left"/>
-                                    <Button Content="В корзину" Style="{StaticResource ActionButtonStyle}" HorizontalAlignment="Right" Click="AddToCart_Click"/>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource ProductCardStyle}" Cursor="Hand" MouseDown="Product_Click">
-                            <StackPanel Margin="12">
-                                <Grid Height="180">
-                                    <Rectangle Fill="#F5F5F5" RadiusX="8" RadiusY="8"/>
-                                </Grid>
-                                <TextBlock Text="Умные часы FitTrack 5" FontWeight="SemiBold" Margin="0,10,0,5"/>
-                                <TextBlock Text="Пульсометр, SpO2, GPS, до 14 дней работы" FontSize="12" TextWrapping="Wrap" Foreground="#777777"/>
-                                <Grid Margin="0,15,0,0">
-                                    <TextBlock Text="15 990 ₽" FontWeight="Bold" FontSize="18" HorizontalAlignment="Left"/>
-                                    <Button Content="В корзину" Style="{StaticResource ActionButtonStyle}" HorizontalAlignment="Right" Click="AddToCart_Click"/>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
+                    <StackPanel x:Name="ProductsPanel" Orientation="Horizontal" Margin="10,0">
+                        <!-- Products will be loaded here from DB -->
                     </StackPanel>
                 </ScrollViewer>
 
