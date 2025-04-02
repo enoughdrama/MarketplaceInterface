@@ -10,11 +10,11 @@ namespace AppAuthorization
         
         [ForeignKey("Order")]
         public int OrderId { get; set; }
-        public virtual Order Order { get; set; }
+        public virtual Order? Order { get; set; }
         
         [ForeignKey("Product")]
         public int ProductId { get; set; }
-        public virtual Product Product { get; set; }
+        public virtual Product? Product { get; set; }
         
         [Required]
         public int Quantity { get; set; }
