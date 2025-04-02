@@ -1,67 +1,69 @@
 using System;
-using System.Data.Entity;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace AppAuthorization
 {
-    public partial class LoginPage : Page
+    public partial class LoginWindow : Window
     {
-        private MainWindow mainWindow;
+        private readonly AppDbContext _context;
 
-        public LoginPage()
+        public LoginWindow()
         {
             InitializeComponent();
-            mainWindow = (MainWindow)Application.Current.MainWindow;
+            _context = new AppDbContext();
         }
 
-        private async void LoginButton_Click(object sender, RoutedEventArgs e)
+        private void BtnLogin_Click(object sender, RoutedEventArgs e)
         {
-            string username = UsernameTextBox.Text.Trim();
-            string password = PasswordBox.Password;
+            string username = txtUsername.Text.Trim();
+            string password = pwdPassword.Password;
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                MessageBox.Show("Введите имя пользователя и пароль.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                txtError.Text = "Пожалуйста, введите имя пользователя и пароль.";
+                txtError.Visibility = Visibility.Visible;
                 return;
             }
 
-            try
-            {
-                using (var context = new AppDbContext())
-                {
-                    var user = await context.Users
-                        .Include(u => u.Role)
-                        .FirstOrDefaultAsync(u => u.Username == username);
-                    
-                    if (user == null)
-                    {
-                        MessageBox.Show("Пользователь не найден.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
+            var user = _context.Users.FirstOrDefault(u => u.Username == username);
 
-                    bool isPasswordValid = PasswordHelper.VerifyPassword(password, user.PasswordHash, user.Salt);
-                    if (!isPasswordValid)
-                    {
-                        MessageBox.Show("Неверный пароль.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-
-                    MessageBox.Show($"Вход выполнен успешно. Вы вошли как {user.Role.RoleName}.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                    
-                    // Navigate to HomePage
-                    mainWindow.NavigateToPage(new HomePage());
-                }
-            }
-            catch (Exception ex)
+            if (user == null)
             {
-                MessageBox.Show($"Ошибка при авторизации: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                txtError.Text = "Пользователь не найден.";
+                txtError.Visibility = Visibility.Visible;
+                return;
             }
+
+            if (!user.IsActive)
+            {
+                txtError.Text = "Аккаунт деактивирован. Обратитесь к администратору.";
+                txtError.Visibility = Visibility.Visible;
+                return;
+            }
+
+            bool isPasswordValid = PasswordHelper.VerifyPassword(password, user.PasswordHash, user.Salt);
+
+            if (!isPasswordValid)
+            {
+                txtError.Text = "Неверный пароль.";
+                txtError.Visibility = Visibility.Visible;
+                return;
+            }
+
+            txtError.Visibility = Visibility.Collapsed;
+            
+            MainWindow mainWindow = new MainWindow(user);
+            mainWindow.Show();
+            this.Close();
         }
 
-        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        private void BtnRegister_Click(object sender, RoutedEventArgs e)
         {
-            mainWindow.NavigateToPage(new RegistrationPage());
+            RegisterWindow registerWindow = new RegisterWindow();
+            registerWindow.Show();
+            this.Close();
         }
     }
 }
