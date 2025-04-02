@@ -24,9 +24,10 @@ namespace AppAuthorization
 
         private void Application_Startup(object sender, StartupEventArgs e)
         {
-            // Show login window
-            LoginWindow loginWindow = new LoginWindow();
-            loginWindow.Show();
+            // Show main window with login page
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.NavigateToPage(new LoginPage());
+            mainWindow.Show();
         }
         
         private void ResetAndInitializeDatabase()
