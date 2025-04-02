@@ -11,7 +11,7 @@ namespace AppAuthorization
         
         [ForeignKey("Payment")]
         public int PaymentId { get; set; }
-        public virtual Payment Payment { get; set; }
+        public virtual Payment? Payment { get; set; }
         
         [Required]
         public decimal Rate { get; set; }
