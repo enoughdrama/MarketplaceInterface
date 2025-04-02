@@ -1,9 +1,10 @@
 using System;
-using System.Threading.Tasks;
+using System.Data.Entity;
+using System.Data.Entity.Validation;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Data.Entity;
-using System.Text.RegularExpressions;
 
 namespace AppAuthorization
 {
@@ -97,16 +98,35 @@ namespace AppAuthorization
                         Username = username,
                         PasswordHash = passwordHash,
                         Salt = salt,
-                        RoleId = 3 // Default to Buyer role (assuming 3 is the Buyer role ID)
+                        RoleId = 3, // Default to Buyer role
+                        RegistrationDate = DateTime.Now,
+                        IsActive = true
                     };
 
                     context.Users.Add(newUser);
-                    await context.SaveChangesAsync();
-
-                    MessageBox.Show("Регистрация успешна.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                     
-                    // Navigate to LoginPage
-                    mainWindow.NavigateToPage(new LoginPage());
+                    try
+                    {
+                        await context.SaveChangesAsync();
+                        MessageBox.Show("Регистрация успешна.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                        
+                        // Navigate to LoginPage
+                        mainWindow.NavigateToPage(new LoginPage());
+                    }
+                    catch (DbEntityValidationException dbEx)
+                    {
+                        StringBuilder errorMessage = new StringBuilder("Ошибки валидации:\n");
+                        
+                        foreach (var validationErrors in dbEx.EntityValidationErrors)
+                        {
+                            foreach (var validationError in validationErrors.ValidationErrors)
+                            {
+                                errorMessage.AppendLine($"- {validationError.PropertyName}: {validationError.ErrorMessage}");
+                            }
+                        }
+                        
+                        MessageBox.Show(errorMessage.ToString(), "Ошибка валидации", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
             catch (Exception ex)
