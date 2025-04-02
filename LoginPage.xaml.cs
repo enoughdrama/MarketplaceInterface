@@ -1,69 +1,73 @@
 using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace AppAuthorization
 {
-    public partial class LoginWindow : Window
+    public partial class LoginPage : Page
     {
-        private readonly AppDbContext _context;
+        private MainWindow mainWindow;
+        private AppDbContext _context;
 
-        public LoginWindow()
+        public LoginPage()
         {
             InitializeComponent();
+            mainWindow = (MainWindow)Application.Current.MainWindow;
             _context = new AppDbContext();
         }
 
-        private void BtnLogin_Click(object sender, RoutedEventArgs e)
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            string username = txtUsername.Text.Trim();
-            string password = pwdPassword.Password;
+            string username = UsernameTextBox.Text.Trim();
+            string password = PasswordBox.Password;
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                txtError.Text = "Пожалуйста, введите имя пользователя и пароль.";
-                txtError.Visibility = Visibility.Visible;
+                ErrorTextBlock.Text = "Введите имя пользователя и пароль.";
+                ErrorTextBlock.Visibility = Visibility.Visible;
                 return;
             }
 
-            var user = _context.Users.FirstOrDefault(u => u.Username == username);
-
-            if (user == null)
+            try
             {
-                txtError.Text = "Пользователь не найден.";
-                txtError.Visibility = Visibility.Visible;
-                return;
-            }
+                var user = await _context.Users
+                    .Include(u => u.Role)
+                    .FirstOrDefaultAsync(u => u.Username == username);
+                
+                if (user == null)
+                {
+                    ErrorTextBlock.Text = "Пользователь не найден.";
+                    ErrorTextBlock.Visibility = Visibility.Visible;
+                    return;
+                }
 
-            if (!user.IsActive)
+                bool isPasswordValid = PasswordHelper.VerifyPassword(password, user.PasswordHash, user.Salt);
+                if (!isPasswordValid)
+                {
+                    ErrorTextBlock.Text = "Неверный пароль.";
+                    ErrorTextBlock.Visibility = Visibility.Visible;
+                    return;
+                }
+
+                // Successful login - create new MainWindow with user
+                MainWindow newMainWindow = new MainWindow(user);
+                newMainWindow.Show();
+                
+                // Close the current MainWindow with login page
+                Window.GetWindow(this).Close();
+            }
+            catch (Exception ex)
             {
-                txtError.Text = "Аккаунт деактивирован. Обратитесь к администратору.";
-                txtError.Visibility = Visibility.Visible;
-                return;
+                ErrorTextBlock.Text = $"Ошибка при авторизации: {ex.Message}";
+                ErrorTextBlock.Visibility = Visibility.Visible;
             }
-
-            bool isPasswordValid = PasswordHelper.VerifyPassword(password, user.PasswordHash, user.Salt);
-
-            if (!isPasswordValid)
-            {
-                txtError.Text = "Неверный пароль.";
-                txtError.Visibility = Visibility.Visible;
-                return;
-            }
-
-            txtError.Visibility = Visibility.Collapsed;
-            
-            MainWindow mainWindow = new MainWindow(user);
-            mainWindow.Show();
-            this.Close();
         }
 
-        private void BtnRegister_Click(object sender, RoutedEventArgs e)
+        private void RegisterButton_Click(object sender, RoutedEventArgs e)
         {
-            RegisterWindow registerWindow = new RegisterWindow();
-            registerWindow.Show();
-            this.Close();
+            mainWindow.NavigateToPage(new RegistrationPage());
         }
     }
 }
