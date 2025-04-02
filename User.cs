@@ -8,41 +8,40 @@ namespace AppAuthorization
     {
         [Key]
         public int Id { get; set; }
-
+        
         [Required]
-        [MaxLength(50)]
         public string Username { get; set; }
-
+        
         [Required]
-        [MaxLength(256)]
         public string PasswordHash { get; set; }
-
+        
         [Required]
-        [MaxLength(50)]
         public string Salt { get; set; }
         
-        [MaxLength(100)]
+        [Required]
         public string FirstName { get; set; }
         
-        [MaxLength(100)]
+        [Required]
         public string LastName { get; set; }
         
-        [MaxLength(150)]
+        [Required]
         public string Email { get; set; }
         
-        [MaxLength(20)]
         public string PhoneNumber { get; set; }
         
-        [MaxLength(255)]
         public string Address { get; set; }
         
-        public DateTime RegistrationDate { get; set; } = DateTime.Now;
+        [Required]
+        public DateTime RegistrationDate { get; set; }
         
-        public bool IsActive { get; set; } = true;
+        [Required]
+        public bool IsActive { get; set; }
         
         [ForeignKey("Role")]
         public int RoleId { get; set; }
-        
         public virtual Role Role { get; set; }
+        
+        [NotMapped]
+        public string FullName => $"{FirstName} {LastName}";
     }
 }
