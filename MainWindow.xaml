@@ -1,25 +1,129 @@
 <Window x:Class="AppAuthorization.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Курсовая работа" Height="700" Width="1100"
-        WindowStartupLocation="CenterScreen">
-    
-    <Window.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
-    
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Система управления маркетплейсом" Height="700" Width="1000" WindowStartupLocation="CenterScreen">
     <Grid>
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#FF8EC5FC" Offset="0"/>
-                <GradientStop Color="#FFE0C3FC" Offset="1"/>
-            </LinearGradientBrush>
-        </Grid.Background>
-        
-        <Frame x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0">
+            <MenuItem Header="Файл">
+                <MenuItem x:Name="menuExit" Header="Выход" Click="MenuExit_Click"/>
+            </MenuItem>
+            <MenuItem x:Name="menuOrders" Header="Заказы" IsEnabled="False" Click="MenuOrders_Click"/>
+            <MenuItem x:Name="menuProducts" Header="Товары" IsEnabled="False" Click="MenuProducts_Click"/>
+            <MenuItem x:Name="menuPayments" Header="Платежи" IsEnabled="False" Click="MenuPayments_Click"/>
+            <MenuItem x:Name="menuReports" Header="Отчеты" IsEnabled="False" Click="MenuReports_Click"/>
+            <MenuItem x:Name="menuUsers" Header="Пользователи" IsEnabled="False" Click="MenuUsers_Click"/>
+        </Menu>
+
+        <TabControl Grid.Row="1" x:Name="mainTabControl" Margin="5">
+            <TabItem Header="Дашборд">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Text="Добро пожаловать в систему управления маркетплейсом" 
+                               FontSize="18" HorizontalAlignment="Center" Margin="0,10,0,20"/>
+
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="#E3F2FD" Margin="5" CornerRadius="5">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Заказы" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock x:Name="txtOrderCount" Text="0" FontSize="24" Margin="0,5"/>
+                                <TextBlock Text="Всего заказов" FontSize="12" Foreground="Gray"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="#E8F5E9" Margin="5" CornerRadius="5">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Продажи" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock x:Name="txtTotalSales" Text="0 ₽" FontSize="24" Margin="0,5"/>
+                                <TextBlock Text="Общий объем продаж" FontSize="12" Foreground="Gray"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="#FFF3E0" Margin="5" CornerRadius="5">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Комиссии" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock x:Name="txtTotalCommissions" Text="0 ₽" FontSize="24" Margin="0,5"/>
+                                <TextBlock Text="Всего комиссий" FontSize="12" Foreground="Gray"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="3" Background="#E1F5FE" Margin="5" CornerRadius="5">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Пользователи" FontWeight="Bold" FontSize="16"/>
+                                <TextBlock x:Name="txtUserCount" Text="0" FontSize="24" Margin="0,5"/>
+                                <TextBlock Text="Всего пользователей" FontSize="12" Foreground="Gray"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <Grid Grid.Row="2" Margin="0,20,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <GroupBox Grid.Column="0" Header="Последние заказы" Margin="5">
+                            <DataGrid x:Name="dgOrders" AutoGenerateColumns="False" IsReadOnly="True" Margin="5" 
+                                      SelectionChanged="DgOrders_SelectionChanged" CanUserAddRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding OrderId}" Width="50"/>
+                                    <DataGridTextColumn Header="Покупатель" Binding="{Binding Buyer.FullName}" Width="*"/>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding OrderDate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" Width="130"/>
+                                    <DataGridTextColumn Header="Сумма" Binding="{Binding TotalAmount, StringFormat=\{0:N2\} ₽}" Width="100"/>
+                                    <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="100"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+
+                        <GroupBox Grid.Column="1" Header="Последние платежи" Margin="5">
+                            <DataGrid x:Name="dgPayments" AutoGenerateColumns="False" IsReadOnly="True" Margin="5" CanUserAddRows="False">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding PaymentId}" Width="50"/>
+                                    <DataGridTextColumn Header="Заказ" Binding="{Binding OrderId}" Width="50"/>
+                                    <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat=\{0:N2\} ₽}" Width="100"/>
+                                    <DataGridTextColumn Header="Способ оплаты" Binding="{Binding PaymentMethod.Name}" Width="*"/>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding PaymentDate, StringFormat=\{0:dd.MM.yyyy HH:mm\}}" Width="130"/>
+                                    <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="100"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <StatusBar Grid.Row="2" Height="25">
+            <StatusBarItem>
+                <TextBlock x:Name="txtStatusUser" Text="Пользователь: " />
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="txtStatusRole" Text="Роль: " />
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock x:Name="txtStatusDateTime" Text="Время: " />
+            </StatusBarItem>
+        </StatusBar>
     </Grid>
 </Window>
