@@ -23,7 +23,11 @@
             <MenuItem x:Name="menuUsers" Header="Пользователи" IsEnabled="False" Click="MenuUsers_Click"/>
         </Menu>
 
-        <TabControl Grid.Row="1" x:Name="mainTabControl" Margin="5">
+        <!-- Main Content Frame -->
+        <Frame Grid.Row="1" x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
+
+        <!-- Dashboard Tab -->
+        <TabControl Grid.Row="1" x:Name="mainTabControl" Margin="5" Visibility="Collapsed">
             <TabItem Header="Дашборд">
                 <Grid>
                     <Grid.RowDefinitions>
