@@ -6,7 +6,6 @@ namespace AppAuthorization
     {
         public AppDbContext() : base("DefaultConnection")
         {
-            Database.SetInitializer(new CreateDatabaseIfNotExists<AppDbContext>());
         }
 
         public DbSet<User> Users { get; set; }
