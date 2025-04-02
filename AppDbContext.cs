@@ -22,17 +22,35 @@ namespace AppAuthorization
         
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            // Configure entity properties
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique();
+                .Property(u => u.Username)
+                .IsRequired()
+                .HasMaxLength(50);
                 
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Email)
+                .Property(u => u.Email)
+                .HasMaxLength(150);
+                
+            modelBuilder.Entity<Role>()
+                .Property(r => r.RoleName)
+                .IsRequired()
+                .HasMaxLength(50);
+                
+            // Create unique indexes
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
                 .IsUnique();
                 
             modelBuilder.Entity<Role>()
                 .HasIndex(r => r.RoleName)
                 .IsUnique();
+                
+            // Configure relationships
+            modelBuilder.Entity<User>()
+                .HasRequired(u => u.Role)
+                .WithMany()
+                .HasForeignKey(u => u.RoleId);
                 
             base.OnModelCreating(modelBuilder);
         }
