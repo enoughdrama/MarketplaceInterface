@@ -96,7 +96,6 @@ namespace AppAuthorization
             }
             catch (Exception ex)
             {
-                // Log the error instead of showing a MessageBox
                 Console.WriteLine($"Error loading categories: {ex.Message}");
             }
         }
@@ -183,7 +182,6 @@ namespace AppAuthorization
             }
             catch (Exception ex)
             {
-                // Log the error instead of showing a MessageBox
                 Console.WriteLine($"Error loading products: {ex.Message}");
             }
         }
@@ -208,12 +206,12 @@ namespace AppAuthorization
 
         private void NotificationsButton_Click(object sender, RoutedEventArgs e)
         {
-            // No messages for now
+            MessageBox.Show("У вас нет новых уведомлений", "Уведомления", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void CartButton_Click(object sender, RoutedEventArgs e)
         {
-            // Cart is empty for now
+            MessageBox.Show("Корзина пуста", "Корзина", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
@@ -241,14 +239,16 @@ namespace AppAuthorization
                         mainWindow.NavigateToPage(new ProductManagementPage());
                         break;
                     case "Мои заказы":
-                        // Not implemented yet
+                        MessageBox.Show("Функционал в разработке", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
                         break;
                     case "Настройки":
-                        // Not implemented yet
+                        MessageBox.Show("Функционал в разработке", "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
                         break;
                     case "Выход":
-                        // Go back to login
-                        mainWindow.NavigateToPage(new LoginPage());
+                        if (MessageBox.Show("Вы действительно хотите выйти?", "Выход", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            mainWindow.NavigateToPage(new LoginPage());
+                        }
                         break;
                 }
             }
@@ -256,14 +256,14 @@ namespace AppAuthorization
 
         private void PromoBanner_Click(object sender, RoutedEventArgs e)
         {
-            // Promo details would go here
+            MessageBox.Show("Летняя распродажа: скидки до 50% на все товары!", "Акция", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void Category_Click(object sender, MouseButtonEventArgs e)
         {
             if (sender is Border border && border.Tag is Category category)
             {
-                // Load category products
+                MessageBox.Show($"Выбрана категория: {category.Name}", "Категория", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -271,7 +271,7 @@ namespace AppAuthorization
         {
             if (sender is Border border && border.Tag is Product product)
             {
-                // Show product details
+                MessageBox.Show($"Выбран товар: {product.Name}\nЦена: {product.Price:N0} ₽", "Товар", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -279,18 +279,18 @@ namespace AppAuthorization
         {
             if (sender is Button button && button.Tag is Product product)
             {
-                // Add to cart functionality
+                MessageBox.Show($"Товар {product.Name} добавлен в корзину", "Корзина", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
         private void Offer_Click(object sender, MouseButtonEventArgs e)
         {
-            // Offer details would go here
+            MessageBox.Show("Специальное предложение активировано!", "Акция", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void ViewOffer_Click(object sender, RoutedEventArgs e)
         {
-            // Show offer details
+            MessageBox.Show("Подробности о специальном предложении", "Акция", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
