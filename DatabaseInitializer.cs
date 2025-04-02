@@ -62,6 +62,26 @@ namespace AppAuthorization
                 context.Users.Add(sellerUser);
                 context.SaveChanges();
                 
+                // Create a sample buyer
+                string buyerPassword = "Buyer123!";
+                PasswordHelper.CreatePasswordHash(buyerPassword, out string buyerHash, out string buyerSalt);
+                
+                User buyerUser = new User
+                {
+                    Username = "buyer",
+                    PasswordHash = buyerHash,
+                    Salt = buyerSalt,
+                    FirstName = "Test",
+                    LastName = "Buyer",
+                    Email = "buyer@marketplace.com",
+                    RoleId = 3, // Buyer role
+                    RegistrationDate = DateTime.Now,
+                    IsActive = true
+                };
+                
+                context.Users.Add(buyerUser);
+                context.SaveChanges();
+                
                 // Seed Payment Methods
                 List<PaymentMethod> paymentMethods = new List<PaymentMethod>
                 {
@@ -98,7 +118,7 @@ namespace AppAuthorization
                         Price = 69990M, 
                         Quantity = 100, 
                         CategoryId = context.Categories.First(c => c.Name == "Electronics").CategoryId,
-                        SellerId = sellerUser.Id  // Use the seller we created
+                        SellerId = sellerUser.Id
                     },
                     new Product 
                     { 
@@ -117,10 +137,140 @@ namespace AppAuthorization
                         Quantity = 200, 
                         CategoryId = context.Categories.First(c => c.Name == "Electronics").CategoryId,
                         SellerId = sellerUser.Id
+                    },
+                    new Product 
+                    { 
+                        Name = "Умные часы FitTrack 5", 
+                        Description = "Пульсометр, SpO2, GPS, до 14 дней работы", 
+                        Price = 15990M, 
+                        Quantity = 75, 
+                        CategoryId = context.Categories.First(c => c.Name == "Electronics").CategoryId,
+                        SellerId = sellerUser.Id
+                    },
+                    new Product 
+                    { 
+                        Name = "Футболка Summer Style", 
+                        Description = "100% хлопок, разные цвета", 
+                        Price = 1990M, 
+                        Quantity = 500, 
+                        CategoryId = context.Categories.First(c => c.Name == "Clothing").CategoryId,
+                        SellerId = sellerUser.Id
+                    },
+                    new Product 
+                    { 
+                        Name = "Джинсы Classic Fit", 
+                        Description = "Классический крой, темно-синий цвет", 
+                        Price = 4990M, 
+                        Quantity = 300, 
+                        CategoryId = context.Categories.First(c => c.Name == "Clothing").CategoryId,
+                        SellerId = sellerUser.Id
                     }
                 };
                 
                 products.ForEach(p => context.Products.Add(p));
+                context.SaveChanges();
+                
+                // Create a few sample orders
+                List<Order> orders = new List<Order>
+                {
+                    new Order
+                    {
+                        BuyerId = buyerUser.Id,
+                        SellerId = sellerUser.Id,
+                        OrderDate = DateTime.Now.AddDays(-5),
+                        TotalAmount = 69990M,
+                        Status = "Completed"
+                    },
+                    new Order
+                    {
+                        BuyerId = buyerUser.Id,
+                        SellerId = sellerUser.Id,
+                        OrderDate = DateTime.Now.AddDays(-2),
+                        TotalAmount = 12490M,
+                        Status = "Shipped"
+                    },
+                    new Order
+                    {
+                        BuyerId = buyerUser.Id,
+                        SellerId = sellerUser.Id,
+                        OrderDate = DateTime.Now.AddDays(-1),
+                        TotalAmount = 6980M,
+                        Status = "Processing"
+                    }
+                };
+                
+                orders.ForEach(o => context.Orders.Add(o));
+                context.SaveChanges();
+                
+                // Add order items
+                List<OrderItem> orderItems = new List<OrderItem>
+                {
+                    new OrderItem
+                    {
+                        OrderId = 1,
+                        ProductId = 1, // Galaxy S23
+                        Quantity = 1,
+                        Price = 69990M
+                    },
+                    new OrderItem
+                    {
+                        OrderId = 2,
+                        ProductId = 3, // AirSound Pro
+                        Quantity = 1,
+                        Price = 12490M
+                    },
+                    new OrderItem
+                    {
+                        OrderId = 3,
+                        ProductId = 5, // T-shirt
+                        Quantity = 2,
+                        Price = 1990M
+                    },
+                    new OrderItem
+                    {
+                        OrderId = 3,
+                        ProductId = 6, // Jeans
+                        Quantity = 1,
+                        Price = 4990M
+                    }
+                };
+                
+                orderItems.ForEach(oi => context.OrderItems.Add(oi));
+                context.SaveChanges();
+                
+                // Add payments
+                List<Payment> payments = new List<Payment>
+                {
+                    new Payment
+                    {
+                        OrderId = 1,
+                        PaymentMethodId = 1, // Credit Card
+                        Amount = 69990M,
+                        PaymentDate = DateTime.Now.AddDays(-5),
+                        Status = "Completed",
+                        TransactionId = "TX-" + Guid.NewGuid().ToString().Substring(0, 8)
+                    },
+                    new Payment
+                    {
+                        OrderId = 2,
+                        PaymentMethodId = 3, // PayPal
+                        Amount = 12490M,
+                        PaymentDate = DateTime.Now.AddDays(-2),
+                        Status = "Completed",
+                        TransactionId = "TX-" + Guid.NewGuid().ToString().Substring(0, 8)
+                    },
+                    new Payment
+                    {
+                        OrderId = 3,
+                        PaymentMethodId = 4, // Cash on Delivery
+                        Amount = 6980M,
+                        PaymentDate = DateTime.Now.AddDays(-1),
+                        Status = "Pending",
+                        TransactionId = "TX-" + Guid.NewGuid().ToString().Substring(0, 8)
+                    }
+                };
+                
+                payments.ForEach(p => context.Payments.Add(p));
                 context.SaveChanges();
                 
                 base.Seed(context);
