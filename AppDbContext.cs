@@ -46,11 +46,64 @@ namespace AppAuthorization
                 .HasIndex(r => r.RoleName)
                 .IsUnique();
                 
-            // Configure relationships
+            // Configure relationships to avoid cycles
             modelBuilder.Entity<User>()
                 .HasRequired(u => u.Role)
                 .WithMany()
                 .HasForeignKey(u => u.RoleId);
+            
+            // Configure Order-User relationship to prevent circular dependencies
+            modelBuilder.Entity<Order>()
+                .HasRequired(o => o.Buyer)
+                .WithMany()
+                .HasForeignKey(o => o.BuyerId)
+                .WillCascadeOnDelete(false);
+                
+            modelBuilder.Entity<Order>()
+                .HasRequired(o => o.Seller)
+                .WithMany()
+                .HasForeignKey(o => o.SellerId)
+                .WillCascadeOnDelete(false);
+                
+            // Prevent circular dependencies for Product-User relationship
+            modelBuilder.Entity<Product>()
+                .HasRequired(p => p.Seller)
+                .WithMany()
+                .HasForeignKey(p => p.SellerId)
+                .WillCascadeOnDelete(false);
+                
+            // Prevent circular dependencies for Payout-User relationship
+            modelBuilder.Entity<Payout>()
+                .HasRequired(p => p.Seller)
+                .WithMany()
+                .HasForeignKey(p => p.SellerId)
+                .WillCascadeOnDelete(false);
+                
+            // Configure OrderItem relationships
+            modelBuilder.Entity<OrderItem>()
+                .HasRequired(oi => oi.Order)
+                .WithMany()
+                .HasForeignKey(oi => oi.OrderId);
+                
+            modelBuilder.Entity<OrderItem>()
+                .HasRequired(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId)
+                .WillCascadeOnDelete(false);
+                
+            // Configure Payment-Order relationship
+            modelBuilder.Entity<Payment>()
+                .HasRequired(p => p.Order)
+                .WithMany()
+                .HasForeignKey(p => p.OrderId)
+                .WillCascadeOnDelete(false);
+                
+            // Configure Commission-Payment relationship
+            modelBuilder.Entity<Commission>()
+                .HasRequired(c => c.Payment)
+                .WithMany()
+                .HasForeignKey(c => c.PaymentId)
+                .WillCascadeOnDelete(false);
                 
             base.OnModelCreating(modelBuilder);
         }
