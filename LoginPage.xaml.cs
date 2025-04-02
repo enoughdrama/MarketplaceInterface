@@ -1,8 +1,7 @@
 using System;
-using System.Threading.Tasks;
+using System.Data.Entity;
 using System.Windows;
 using System.Windows.Controls;
-using System.Data.Entity;
 
 namespace AppAuthorization
 {
@@ -31,7 +30,10 @@ namespace AppAuthorization
             {
                 using (var context = new AppDbContext())
                 {
-                    var user = await context.Users.FirstOrDefaultAsync(u => u.Username == username);
+                    var user = await context.Users
+                        .Include(u => u.Role)
+                        .FirstOrDefaultAsync(u => u.Username == username);
+                    
                     if (user == null)
                     {
                         MessageBox.Show("Пользователь не найден.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
@@ -45,7 +47,7 @@ namespace AppAuthorization
                         return;
                     }
 
-                    MessageBox.Show("Вход выполнен успешно.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show($"Вход выполнен успешно. Вы вошли как {user.Role.RoleName}.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                     
                     // Navigate to HomePage
                     mainWindow.NavigateToPage(new HomePage());
