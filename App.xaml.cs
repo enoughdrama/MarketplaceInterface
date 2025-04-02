@@ -1,5 +1,6 @@
 using System;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Windows;
 
 namespace AppAuthorization
@@ -11,24 +12,24 @@ namespace AppAuthorization
             base.OnStartup(e);
             
             // Initialize database
-            InitializeDatabase();
+            ResetAndInitializeDatabase();
         }
         
-        private void InitializeDatabase()
+        private void ResetAndInitializeDatabase()
         {
             try
             {
                 using (var context = new AppDbContext())
                 {
-                    // Force the database to be created if it doesn't exist
-                    if (!context.Database.Exists())
-                    {
-                        context.Database.Create();
-                    }
+                    // We need to reset the database for a clean start
+                    // This is appropriate for development but would not be used in production
+                    Database.SetInitializer(new DropCreateDatabaseAlways<AppDbContext>());
                     
-                    // This will apply any pending migrations and seed the database
+                    // Custom initializer that will seed data
                     Database.SetInitializer(new DatabaseInitializer());
-                    context.Database.Initialize(force: false);
+                    
+                    // Force initialization
+                    context.Database.Initialize(force: true);
                 }
             }
             catch (Exception ex)
