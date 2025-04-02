@@ -1,143 +1,131 @@
 using System;
-using System.Data.Entity;
-using System.Data.Entity.Validation;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Linq;
 
 namespace AppAuthorization
 {
     public partial class RegistrationPage : Page
     {
         private MainWindow mainWindow;
+        private AppDbContext _context;
+        private SolidColorBrush _validBrush = new SolidColorBrush(Colors.Green);
+        private SolidColorBrush _invalidBrush = new SolidColorBrush(Color.FromRgb(85, 85, 85));
 
         public RegistrationPage()
         {
             InitializeComponent();
             mainWindow = (MainWindow)Application.Current.MainWindow;
-        }
-
-        private bool IsValidPassword(string password, out string error)
-        {
-            error = string.Empty;
-
-            if (password.Length < 8)
-            {
-                error = "Пароль должен содержать не менее 8 символов.";
-                return false;
-            }
-
-            string allowedPattern = @"^[A-Za-z0-9!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]+$";
-            if (!Regex.IsMatch(password, allowedPattern))
-            {
-                error = "Пароль может содержать только английские буквы, цифры и спецсимволы.";
-                return false;
-            }
-
-            if (!Regex.IsMatch(password, @"[A-Za-z]"))
-            {
-                error = "Пароль должен содержать хотя бы одну английскую букву.";
-                return false;
-            }
-            
-            if (!Regex.IsMatch(password, @"[0-9]"))
-            {
-                error = "Пароль должен содержать хотя бы одну цифру.";
-                return false;
-            }
-
-            if (!Regex.IsMatch(password, @"[!@#$%^&*()_+\-=\[\]{};':""\\|,.<>\/?]"))
-            {
-                error = "Пароль должен содержать хотя бы один спецсимвол.";
-                return false;
-            }
-
-            return true;
-        }
-
-        private async void RegisterButton_Click(object sender, RoutedEventArgs e)
-        {
-            string username = UsernameTextBox.Text.Trim();
-            string password = PasswordBox.Password;
-            string confirmPassword = ConfirmPasswordBox.Password;
-
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(confirmPassword))
-            {
-                MessageBox.Show("Заполните все поля.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            if (password != confirmPassword)
-            {
-                MessageBox.Show("Пароли не совпадают.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            if (!IsValidPassword(password, out string passwordError))
-            {
-                MessageBox.Show(passwordError, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                return;
-            }
-
-            try
-            {
-                using (var context = new AppDbContext())
-                {
-                    var existingUser = await context.Users.FirstOrDefaultAsync(u => u.Username == username);
-                    if (existingUser != null)
-                    {
-                        MessageBox.Show("Пользователь с таким именем уже существует.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-
-                    PasswordHelper.CreatePasswordHash(password, out string passwordHash, out string salt);
-
-                    var newUser = new User
-                    {
-                        Username = username,
-                        PasswordHash = passwordHash,
-                        Salt = salt,
-                        RoleId = 3, // Default to Buyer role
-                        RegistrationDate = DateTime.Now,
-                        IsActive = true
-                    };
-
-                    context.Users.Add(newUser);
-                    
-                    try
-                    {
-                        await context.SaveChangesAsync();
-                        MessageBox.Show("Регистрация успешна.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                        
-                        // Navigate to LoginPage
-                        mainWindow.NavigateToPage(new LoginPage());
-                    }
-                    catch (DbEntityValidationException dbEx)
-                    {
-                        StringBuilder errorMessage = new StringBuilder("Ошибки валидации:\n");
-                        
-                        foreach (var validationErrors in dbEx.EntityValidationErrors)
-                        {
-                            foreach (var validationError in validationErrors.ValidationErrors)
-                            {
-                                errorMessage.AppendLine($"- {validationError.PropertyName}: {validationError.ErrorMessage}");
-                            }
-                        }
-                        
-                        MessageBox.Show(errorMessage.ToString(), "Ошибка валидации", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка при регистрации: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            _context = new AppDbContext();
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             mainWindow.NavigateToPage(new LoginPage());
+        }
+
+        private void RegisterButton_Click(object sender, RoutedEventArgs e)
+        {
+            string username = UsernameTextBox.Text.Trim();
+            string password = PasswordBox.Password;
+            string confirmPassword = ConfirmPasswordBox.Password;
+
+            if (string.IsNullOrEmpty(username))
+            {
+                ErrorTextBlock.Text = "Введите имя пользователя.";
+                ErrorTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
+
+            if (_context.Users.Any(u => u.Username == username))
+            {
+                ErrorTextBlock.Text = "Пользователь с таким именем уже существует.";
+                ErrorTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
+
+            if (!IsPasswordValid(password))
+            {
+                ErrorTextBlock.Text = "Пароль не соответствует требованиям.";
+                ErrorTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
+
+            if (password != confirmPassword)
+            {
+                ErrorTextBlock.Text = "Пароли не совпадают.";
+                ErrorTextBlock.Visibility = Visibility.Visible;
+                return;
+            }
+
+            try
+            {
+                PasswordHelper.CreatePasswordHash(password, out string passwordHash, out string salt);
+
+                User newUser = new User
+                {
+                    Username = username,
+                    PasswordHash = passwordHash,
+                    Salt = salt,
+                    FirstName = username, // Default values for demo
+                    LastName = "User",
+                    Email = $"{username}@example.com",
+                    RoleId = 3, // Default to Buyer role
+                    RegistrationDate = DateTime.Now,
+                    IsActive = true
+                };
+
+                _context.Users.Add(newUser);
+                _context.SaveChanges();
+
+                // Successful registration - navigate to login page
+                mainWindow.NavigateToPage(new LoginPage());
+            }
+            catch (Exception ex)
+            {
+                ErrorTextBlock.Text = $"Ошибка при регистрации: {ex.Message}";
+                ErrorTextBlock.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            UpdatePasswordValidation();
+        }
+
+        private void ConfirmPasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            UpdatePasswordValidation();
+        }
+
+        private void UpdatePasswordValidation()
+        {
+            string password = PasswordBox.Password;
+            
+            // Check min length
+            MinLengthTextBlock.Foreground = password.Length >= 8 ? _validBrush : _invalidBrush;
+            
+            // Check for letter
+            HasLetterTextBlock.Foreground = Regex.IsMatch(password, "[a-zA-Z]") ? _validBrush : _invalidBrush;
+            
+            // Check for digit
+            HasDigitTextBlock.Foreground = Regex.IsMatch(password, "[0-9]") ? _validBrush : _invalidBrush;
+            
+            // Check for special character
+            HasSpecialTextBlock.Foreground = Regex.IsMatch(password, "[！@#$%^&*]") ? _validBrush : _invalidBrush;
+            
+            // Hide error message when typing
+            ErrorTextBlock.Visibility = Visibility.Collapsed;
+        }
+
+        private bool IsPasswordValid(string password)
+        {
+            return password.Length >= 8 &&
+                   Regex.IsMatch(password, "[a-zA-Z]") &&
+                   Regex.IsMatch(password, "[0-9]") &&
+                   Regex.IsMatch(password, "[！@#$%^&*]");
         }
     }
 }
