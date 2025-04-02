@@ -9,21 +9,22 @@ namespace AppAuthorization
         public int ProductId { get; set; }
         
         [Required]
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         
-        public string Description { get; set; }
+        public string? Description { get; set; }
         
         [Required]
         public decimal Price { get; set; }
         
+        [Required]
         public int Quantity { get; set; }
         
         [ForeignKey("Category")]
         public int CategoryId { get; set; }
-        public virtual Category Category { get; set; }
+        public virtual Category? Category { get; set; }
         
         [ForeignKey("Seller")]
         public int SellerId { get; set; }
-        public virtual User Seller { get; set; }
+        public virtual User? Seller { get; set; }
     }
 }
