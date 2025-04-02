@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,7 +16,8 @@ namespace AppAuthorization
         [Required]
         public decimal TotalAmount { get; set; }
         
-        public string Status { get; set; }
+        [MaxLength(50)]
+        public string Status { get; set; } = "Новый";
         
         [ForeignKey("Buyer")]
         public int BuyerId { get; set; }
@@ -24,5 +26,13 @@ namespace AppAuthorization
         [ForeignKey("Seller")]
         public int SellerId { get; set; }
         public virtual User Seller { get; set; }
+        
+        // Navigation property
+        public virtual ICollection<OrderItem> Items { get; set; }
+        
+        public Order()
+        {
+            Items = new HashSet<OrderItem>();
+        }
     }
 }
